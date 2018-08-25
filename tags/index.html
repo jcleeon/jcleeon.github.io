@@ -10,7 +10,7 @@
     <link rel="icon" href="/favicon.ico">
   
     
-  <title>Archives | jcleeon</title>
+  <title>jcleeon</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -38,13 +38,13 @@
       
         <li class="nav-item">
           
-            <a href="/archives" class="item-link active">归档</a>
+            <a href="/archives" class="item-link">归档</a>
           
         </li>
       
         <li class="nav-item">
           
-            <a href="/tags" class="item-link">标签</a>
+            <a href="/tags" class="item-link active">标签</a>
           
         </li>
       
@@ -52,35 +52,31 @@
   </div>
 </header>
 
-  <main id="archive">
-  <div class="content">
-        
-    
-      <div class="year-list">
-        <h3>2018</h3>
-        <ul>
-          
-            <li >
-              <time>2018/08/25</time>
-              <a href="/2018/08/25/进制转换/">
-                <span>
+  <main id='tags'>
+  <div class="tags-container">
+  <div id='tag_cloud' class="tags">
+      
+          <a href="#system" title="system" rel="1">system</a>
+      
+  </div>
+  
+  <div class="tag-list">
+      <span class="fa fa-tag listing-seperator" id="system">
+          <span class="tag-text">system</span>
+      </span>
+      
+        <div class="post-preview">
+            <a href="/2018/08/25/进制转换/">
+                <h2 class="post-title">
                     常用进制转换
-                </span>
-              </a>
-            </li>
-          
-            <li >
-              <time>2018/07/04</time>
-              <a href="/2018/07/04/linux-ssh/">
-                <span>
-                    linux-ssh
-                </span>
-              </a>
-            </li>
-          
-        </ul>
-      </div>
-        
+                </h2>
+                
+            </a>
+            <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+        </div>
+      
+  </div>
+    
   </div>
 </main>
 
