@@ -18,7 +18,7 @@ a {
 main {
   flex-grow: 1;
   display: flex;
-  max-width: 1000px;
+  max-width: 1200px;
   padding: 0 16px;
   margin: 0 auto; }
 
@@ -26,7 +26,7 @@ main {
   display: inline-block; }
 
 footer .copyright {
-  max-width: 1000px;
+  max-width: 1200px;
   padding: 0 16px;
   margin: 0 auto;
   display: flex;
@@ -42,7 +42,7 @@ header {
   margin-bottom: 15px;
   box-shadow: 0 2px 5px -2px rgba(0, 0, 0, 0.05); }
   header .header-container {
-    max-width: 1000px;
+    max-width: 1200px;
     padding: 0 16px;
     margin: 0 auto;
     display: flex;
@@ -81,9 +81,9 @@ header {
     color: #6E7173; }
 
 #archive {
-  width: 1000px; }
+  width: 1200px; }
   #archive .content {
-    width: 66%;
+    width: 76%;
     background-color: #ffffff;
     border-radius: 2px;
     box-shadow: 0 2px 5px -2px rgba(0, 0, 0, 0.05);
@@ -116,7 +116,7 @@ header {
 
 @media (min-width: 1032px) {
   #archive {
-    width: 1000px; } }
+    width: 1200px; } }
 
 @media (max-width: 1032px) {
   #archive {
@@ -128,9 +128,9 @@ header {
     width: 100%; } }
 
 #post {
-  width: 1000px; }
+  width: 1200px; }
   #post .content article {
-    width: 66%;
+    width: 76%;
     background-color: #ffffff;
     border-radius: 2px;
     box-shadow: 0 2px 5px -2px rgba(0, 0, 0, 0.05);
@@ -142,7 +142,7 @@ header {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0; }
   #post .content > .comment {
-    width: 66%;
+    width: 76%;
     background-color: #ffffff;
     border-radius: 2px;
     box-shadow: 0 2px 5px -2px rgba(0, 0, 0, 0.05);
@@ -165,7 +165,7 @@ header {
       #post .content .post-meta a:hover {
         color: #007fff; }
   #post > .content {
-    width: 66%; }
+    width: 80%; }
   #post aside {
     flex-basis: 34%; }
     #post aside .toc-container {
@@ -205,7 +205,7 @@ header {
 
 @media (min-width: 1032px) {
   #post {
-    width: 1000px; } }
+    width: 1200px; } }
 
 @media (max-width: 1032px) {
   #post {
@@ -616,13 +616,13 @@ header {
   list-style: none; }
 
 #index .posts-list {
-  width: 66%;
+  width: 76%;
   background-color: #ffffff;
   border-radius: 2px;
   box-shadow: 0 2px 5px -2px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   box-sizing: border-box;
-  flex-basis: 66%;
+  flex-basis: 80%;
   align-self: flex-start; }
   #index .posts-list section {
     padding: 20px 25px;
@@ -713,7 +713,7 @@ header {
     display: block; }
 
 .paging {
-  max-width: 1000px;
+  max-width: 1200px;
   padding: 0 16px;
   margin: 0 auto;
   padding-top: 1em; }
@@ -739,9 +739,9 @@ header {
 
 @media (min-width: 1032px) {
   #index {
-    width: 1000px; }
+    width: 1200px; }
   .paging {
-    width: 1000px; } }
+    width: 1200px; } }
 
 @media (max-width: 1032px) {
   .paging {
@@ -763,13 +763,13 @@ header {
     width: 100%; } }
 
 #tags .tags-container {
-  width: 66%;
+  width: 76%;
   background-color: #ffffff;
   border-radius: 2px;
   box-shadow: 0 2px 5px -2px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   box-sizing: border-box;
-  width: 66%;
+  width: 80%;
   padding: 0; }
 
 #tags .tags {
@@ -830,7 +830,7 @@ header {
 
 @media (min-width: 1032px) {
   #tags {
-    width: 1000px; } }
+    width: 1200px; } }
 
 @media (max-width: 700px) {
   #tags .tags-container {
