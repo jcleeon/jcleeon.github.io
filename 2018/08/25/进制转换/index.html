@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="jcleeon">
 <meta property="og:description" content="进制介绍进位制分为我们熟悉的十进制 二进制 八进制 十六进制 二十进制 六十进制等等 十进制基数为10的计数系统，最常用的进制方式，视为因为人类具有十根手指而产生。   数码：0,1,2,3,4,5,6,7,8,9 规则：逢十进一，借一当十 位权：10^n 二进制基数为2的计数系统，源于计算机的诞生，主要应用于计算机领域。    数码：0,1 规则：逢二进一，借一当二 位权：2^n 八进制基数为8">
 <meta property="og:locale" content="zh">
-<meta property="og:updated_time" content="2018-08-25T09:04:28.068Z">
+<meta property="og:updated_time" content="2018-08-25T09:08:11.583Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="jcleeon">
 <meta name="twitter:description" content="进制介绍进位制分为我们熟悉的十进制 二进制 八进制 十六进制 二十进制 六十进制等等 十进制基数为10的计数系统，最常用的进制方式，视为因为人类具有十根手指而产生。   数码：0,1,2,3,4,5,6,7,8,9 规则：逢十进一，借一当十 位权：10^n 二进制基数为2的计数系统，源于计算机的诞生，主要应用于计算机领域。    数码：0,1 规则：逢二进一，借一当二 位权：2^n 八进制基数为8">
@@ -103,11 +103,11 @@
 <h3 id="常用进制之间的转换"><a href="#常用进制之间的转换" class="headerlink" title="常用进制之间的转换"></a>常用进制之间的转换</h3><h4 id="（1）2进制转10进制"><a href="#（1）2进制转10进制" class="headerlink" title="（1）2进制转10进制"></a>（1）2进制转10进制</h4><p>以小数点为界(如1101.110)，将拆分成整数部分(1101)和小数部分(110)   </p>
 <h5 id="计算整数部分"><a href="#计算整数部分" class="headerlink" title="计算整数部分"></a>计算整数部分</h5><p>从最低位的位置（从右向左）开始，位置依次列为1,2,3…n，将第n位的数（0或1）乘以2的n-1次方，依次相加即为10进制数。</p>
 <p><code>举例</code>：<br>以整数部分 1101 为例，位置1对应数码 1，位置2对应数码0，位置3对应数码1，位置4对应数码1. </p>
-<p><code>计算</code>:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1101(2) = 1\times2^0 + 0\times2^1 + 1\times2^2 + 1\times2^3  = 13(10)</span><br></pre></td></tr></table></figure></p>
+<p><code>计算</code>:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1101(2) = 1*2^0 + 0*2^1 + 1*2^2 + 1*2^3  = 13(10)</span><br></pre></td></tr></table></figure></p>
 <h5 id="计算小数部分"><a href="#计算小数部分" class="headerlink" title="计算小数部分"></a>计算小数部分</h5><p>小数位的计算与整数位类似，有两点区别:<br>(1)小数位计算的方向从左向右开（高位到低位）<br>(2)小数位的位权是: </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">i^&#123;-n&#125;</span><br></pre></td></tr></table></figure>
 <p><code>举例</code>:<br>以小数部分110为例，位置1对应数码1，位置2对应数码1，位置3对应数码0</p>
-<p><code>计算</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">110 = 1 \times 2^&#123;-1&#125; + 1\times2^&#123;-2&#125; + 0\times2^&#123;-3&#125; = 0.75</span><br></pre></td></tr></table></figure></p>
+<p><code>计算</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">110 = 1 * 2^&#123;-1&#125; + 1 * 2^&#123;-2&#125; + 0 * 2^&#123;-3&#125; = 0.75</span><br></pre></td></tr></table></figure></p>
 <p>综上: 1101.110二进制转换为十进制为：13.75</p>
 <h4 id="（2）2进制转换为16进制"><a href="#（2）2进制转换为16进制" class="headerlink" title="（2）2进制转换为16进制"></a>（2）2进制转换为16进制</h4><p>每四位二进制码对应一位16进制码，为什么呢？<br>16进制的进制码是0,1,2,,,9,A,,,,F(其实就是0…15)，那么四位二级制是多少呢?<br>最小0000为0，最大1111为15。四位二进制刚好等于一位16进制。<br>以小数点为界，整数部分，从右向左一次分为每四位一组，不够四位的在左边补0，小数部分将二进制数从左向右每4位一组，不足四位的，右边补0。将每四位二进制转为10进制数，然后将计算结果<code>拼接</code>一起即可。 </p>
 <p><code>举例</code>：<br>11011.11 转为 4位一组 ： 0001 1011 . 1100   </p>
@@ -133,7 +133,7 @@
 <h4 id="（6）16进制转10进制"><a href="#（6）16进制转10进制" class="headerlink" title="（6）16进制转10进制"></a>（6）16进制转10进制</h4><p>16进制转10进制，与2进制转10进制方式相同，只是计算时二进制的位权为 2^n，16进制的位权为 16^n</p>
 <p>如将5D.5转为10进制</p>
 <p><code>计算</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">5D.5(16) = 5 \times 16^1 + 13 \times 16^0 + 5 \times 16^&#123;-1&#125; = 93.3125(10)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">5D.5(16) = 5 * 16^1 + 13 * 16^0 + 5 * 16^&#123;-1&#125; = 93.3125(10)</span><br></pre></td></tr></table></figure>
 
       
     </div>
