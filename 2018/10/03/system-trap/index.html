@@ -94,18 +94,18 @@
 
 
 
-<meta name="description" content="陷阱 (trap)维基百科的解释)  在计算和操作系统中，`陷阱`也称为`异常`或`故障`，通常是一种由异常条件(如断点、零除、无效内存访问)引起的同步中断。陷阱通常会导致切换到`内核模式`，操作系统将执行一些操作，然后再返回到初始进程。  通常来讲，`陷阱`是专门指用于启动到监视器程序或调试器的上下文切换的中断。 一般性解读 `陷阱` 是一种软件中断，由代码调用（如应用程序），调用操作系统提供的">
+<meta name="description" content="维基百科) 在计算机中，`陷阱`也称为`异常`或`故障`，通常是一种由异常条件(如断点、零除、无效内存访问)引起的同步中断。陷阱通常会导致切换到`内核模式`，操作系统将执行一些操作，然后再返回到初始进程。通常来讲，`陷阱`是专门指用于启动到监视器程序或调试器的上下文切换的中断。 一般性解读 陷阱 是一种软件中断，由代码调用（如应用程序），调用操作系统提供的接口(提供操作硬件的指令，通常是同步的)。">
 <meta name="keywords" content="-system">
 <meta property="og:type" content="article">
 <meta property="og:title" content="操作系统-陷阱">
 <meta property="og:url" content="//jcleeon.github.io/2018/10/03/system-trap/index.html">
 <meta property="og:site_name" content="jcleeon">
-<meta property="og:description" content="陷阱 (trap)维基百科的解释)  在计算和操作系统中，`陷阱`也称为`异常`或`故障`，通常是一种由异常条件(如断点、零除、无效内存访问)引起的同步中断。陷阱通常会导致切换到`内核模式`，操作系统将执行一些操作，然后再返回到初始进程。  通常来讲，`陷阱`是专门指用于启动到监视器程序或调试器的上下文切换的中断。 一般性解读 `陷阱` 是一种软件中断，由代码调用（如应用程序），调用操作系统提供的">
+<meta property="og:description" content="维基百科) 在计算机中，`陷阱`也称为`异常`或`故障`，通常是一种由异常条件(如断点、零除、无效内存访问)引起的同步中断。陷阱通常会导致切换到`内核模式`，操作系统将执行一些操作，然后再返回到初始进程。通常来讲，`陷阱`是专门指用于启动到监视器程序或调试器的上下文切换的中断。 一般性解读 陷阱 是一种软件中断，由代码调用（如应用程序），调用操作系统提供的接口(提供操作硬件的指令，通常是同步的)。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-02T19:53:14.892Z">
+<meta property="og:updated_time" content="2018-10-02T19:56:32.034Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="操作系统-陷阱">
-<meta name="twitter:description" content="陷阱 (trap)维基百科的解释)  在计算和操作系统中，`陷阱`也称为`异常`或`故障`，通常是一种由异常条件(如断点、零除、无效内存访问)引起的同步中断。陷阱通常会导致切换到`内核模式`，操作系统将执行一些操作，然后再返回到初始进程。  通常来讲，`陷阱`是专门指用于启动到监视器程序或调试器的上下文切换的中断。 一般性解读 `陷阱` 是一种软件中断，由代码调用（如应用程序），调用操作系统提供的">
+<meta name="twitter:description" content="维基百科) 在计算机中，`陷阱`也称为`异常`或`故障`，通常是一种由异常条件(如断点、零除、无效内存访问)引起的同步中断。陷阱通常会导致切换到`内核模式`，操作系统将执行一些操作，然后再返回到初始进程。通常来讲，`陷阱`是专门指用于启动到监视器程序或调试器的上下文切换的中断。 一般性解读 陷阱 是一种软件中断，由代码调用（如应用程序），调用操作系统提供的接口(提供操作硬件的指令，通常是同步的)。">
 
 
 
@@ -362,13 +362,12 @@
       
 
       
-        <h2 id="陷阱-trap"><a href="#陷阱-trap" class="headerlink" title="陷阱 (trap)"></a>陷阱 (trap)</h2><p><a href="https://en.wikipedia.org/wiki/Trap_(computing" target="_blank" rel="noopener">维基百科的解释</a>)</p>
-<pre><code> 在计算和操作系统中，`陷阱`也称为`异常`或`故障`，通常是一种由异常条件(如断点、零除、无效内存访问)引起的同步中断。陷阱通常会导致切换到`内核模式`，操作系统将执行一些操作，然后再返回到初始进程。
-
-通常来讲，`陷阱`是专门指用于启动到监视器程序或调试器的上下文切换的中断。
+        <p><a href="https://en.wikipedia.org/wiki/Trap_(computing" target="_blank" rel="noopener">维基百科</a>)</p>
+<pre><code>在计算机中，`陷阱`也称为`异常`或`故障`，通常是一种由异常条件(如断点、零除、无效内存访问)引起的同步中断。陷阱通常会导致切换到`内核模式`，操作系统将执行一些操作，然后再返回到初始进程。通常来讲，`陷阱`是专门指用于启动到监视器程序或调试器的上下文切换的中断。
 </code></pre><p><strong>一般性解读</strong></p>
-<pre><code>`陷阱` 是一种软件中断，由代码调用（如应用程序），调用操作系统提供的接口(提供操作硬件的指令，通常是同步的)。中断由事件调用(很多时候是硬件，比如接收数据的网卡或CPU定时器)引起，顾名思义中断操作系统正常的控制流，因为CPU必须切换到驱动程序来处理事件。
-</code></pre><h3 id="陷阱的实际作用"><a href="#陷阱的实际作用" class="headerlink" title="陷阱的实际作用"></a>陷阱的实际作用</h3><p>在计算机中，存在两种状态：用户态和内核态。</p>
+<p><code>陷阱</code> 是一种软件中断，由代码调用（如应用程序），调用操作系统提供的接口(提供操作硬件的指令，通常是同步的)。中断由事件调用(很多时候是硬件，比如接收数据的网卡或CPU定时器)引起，顾名思义中断操作系统正常的控制流，因为CPU必须切换到驱动程序来处理事件。</p>
+<p><strong>陷阱的实际作用</strong></p>
+<p>在计算机中，存在两种状态：用户态和内核态。</p>
 <ul>
 <li><p>内核态</p>
 <p>  操作系统运行时处于内核态中，也可以理解为操作系统就是内核，其对计算机的所有硬件有着安全访问的权限，可以使机器运行任何指令。</p>
@@ -470,17 +469,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.jpg"
@@ -542,22 +532,6 @@
 
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#陷阱-trap"><span class="nav-number">1.</span> <span class="nav-text">陷阱 (trap)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#陷阱的实际作用"><span class="nav-number">1.1.</span> <span class="nav-text">陷阱的实际作用</span></a></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
