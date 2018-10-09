@@ -474,8 +474,7 @@
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O.[[GetPrototypeOf]]()</span><br></pre></td></tr></table></figure>
 <p>但是，访问内部插槽并不是通过正常的 <code>get</code> 和 <code>set</code> 操作进行的。如果 <code>getDate()</code> 是通过代理调用的，它就无法在 <code>this</code> 中找到它需要的内部槽位，并会报 <code>TypeError</code>。</p>
 <p>对于 <code>Date</code> 方法，语言规范声明：</p>
-<pre><code>除非另有明确说明，下面定义的 `Number` 原型对象的方法不是通用的，传递给它们的这个值必须是一个 `Number` 值或一个具有 `[[NumberData]]` 内部槽的对象，该槽已经初始化为一个 `Number` 值
-</code></pre><p>#### </p>
+<p>除非另有明确说明，下面定义的 <code>Number</code> 原型对象的方法不是通用的，传递给它们的这个值必须是一个 <code>Number</code> 值或一个具有 <code>[[NumberData]]</code> 内部槽的对象，该槽已经初始化为一个 <code>Number</code> 值</p>
 <h5 id="数组可以被透明包装"><a href="#数组可以被透明包装" class="headerlink" title="数组可以被透明包装"></a>数组可以被透明包装</h5><p>与其他内置程序相比，数组可以透明包装。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> proxy = <span class="keyword">new</span> <span class="built_in">Proxy</span>(<span class="keyword">new</span> <span class="built_in">Array</span>(), &#123;&#125;)</span><br><span class="line">proxy.push(<span class="string">'a'</span>)</span><br><span class="line"><span class="built_in">console</span>.log(proxy.length) <span class="comment">// 1</span></span><br><span class="line"><span class="built_in">console</span>.log(proxy[<span class="number">0</span>]) <span class="comment">// a</span></span><br></pre></td></tr></table></figure>
 <p>之所以数组是可包装的，是因为尽管属性访问是定制的，以使 <code>length</code> 可被访问。数组方法不依赖于内部插槽——它们是通用的</p>
