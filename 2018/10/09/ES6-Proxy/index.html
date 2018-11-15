@@ -102,7 +102,7 @@
 <meta property="og:site_name" content="jcleeon">
 <meta property="og:description" content="译自：Metaprogramming with proxies Proxy 是什么Proxy 使你能够拦截和定制对象执行的操作（如获取属性），是一种元编程特性。 下面的例子中，Proxy是一个我们正在拦截操作的代理对象，handler 是处理拦截操作的对象。 在这个例子中，我们只拦截一个简单的操作: get  123456789const target = &amp;#123;&amp;#125;const ha">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-09T01:23:52.800Z">
+<meta property="og:updated_time" content="2018-10-09T01:36:57.422Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ES6 Proxy元编程">
 <meta name="twitter:description" content="译自：Metaprogramming with proxies Proxy 是什么Proxy 使你能够拦截和定制对象执行的操作（如获取属性），是一种元编程特性。 下面的例子中，Proxy是一个我们正在拦截操作的代理对象，handler 是处理拦截操作的对象。 在这个例子中，我们只拦截一个简单的操作: get  123456789const target = &amp;#123;&amp;#125;const ha">
@@ -380,7 +380,7 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="built_in">eval</span>(<span class="number">5</span> + <span class="number">2</span>)) <span class="comment">// 7</span></span><br></pre></td></tr></table></figure>
 <p>其他的一些 <code>JavaScript</code> 看上去不像元编程，如果仔细看的话，它们确实是：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Base level</span></span><br><span class="line"><span class="keyword">let</span> obj = &#123;</span><br><span class="line">  hello() &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'hello'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Meta level</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">const</span> key <span class="keyword">of</span> <span class="built_in">Object</span>.keys(obj)) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(key)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这段程序在运行时，遍历自己的结构。这看起来不太像元编程，因为在 <code>JavaScript</code> 中，程序结构和数据结构的概念是比较模糊的。所有的 <code>Object.*</code> 的方法是可以被看做是远程成函数的</p>
+<p>这段程序在运行时，遍历自己的结构。这看起来不太像元编程，因为在 <code>JavaScript</code> 中，程序结构和数据结构的概念是比较模糊的。所有的 <code>Object.*</code> 的方法是可以被看做是元编程函数的</p>
 <h4 id="元编程的种类"><a href="#元编程的种类" class="headerlink" title="元编程的种类"></a>元编程的种类</h4><p>反射元编程，是指程序处理自身的过程。三种反射元编程的区别：</p>
 <ul>
 <li><strong>内省（Introspection）</strong>：运行时检查对象类型</li>
@@ -564,6 +564,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2018/11/13/递归/" rel="prev" title="递归">
+                递归 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -639,7 +643,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -650,7 +654,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
