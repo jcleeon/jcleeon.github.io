@@ -102,12 +102,12 @@
 <meta property="og:site_name" content="jcleeon">
 <meta property="og:description" content="如上图，小程序框架中数据绑定的原理示意图，js是一个独立的线程，对数据操作后需要经过线程通信，将数据发送给webview 渲染引擎，最终呈现出效果。线程间通信就会暴露两个缺陷：1. 频繁操作会导致通信阻塞 2. 单次通信传递数据量多大，会导致通信长时间被占用，进而导致通信阻塞 优化建议：   1.对一个数组进行增加数据时只对push或者concat的数据进行setData，以减小setData传递">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://cdn.jclee.cn/MP_1.jpg">
-<meta property="og:updated_time" content="2019-03-05T14:56:41.331Z">
+<meta property="og:image" content="http://jclee.cn/MP_1.jpg">
+<meta property="og:updated_time" content="2019-03-05T15:00:12.044Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="小程序常见问题整理">
 <meta name="twitter:description" content="如上图，小程序框架中数据绑定的原理示意图，js是一个独立的线程，对数据操作后需要经过线程通信，将数据发送给webview 渲染引擎，最终呈现出效果。线程间通信就会暴露两个缺陷：1. 频繁操作会导致通信阻塞 2. 单次通信传递数据量多大，会导致通信长时间被占用，进而导致通信阻塞 优化建议：   1.对一个数组进行增加数据时只对push或者concat的数据进行setData，以减小setData传递">
-<meta name="twitter:image" content="http://cdn.jclee.cn/MP_1.jpg">
+<meta name="twitter:image" content="http://jclee.cn/MP_1.jpg">
 
 
 
@@ -342,7 +342,7 @@
       
 
       
-        <p><img src="http://cdn.jclee.cn/MP_1.jpg"><br>如上图，小程序框架中数据绑定的原理示意图，js是一个独立的线程，对数据操作后需要经过线程通信，将数据发送给webview 渲染引擎，最终呈现出效果。线程间通信就会暴露两个缺陷：1. 频繁操作会导致通信阻塞 2. 单次通信传递数据量多大，会导致通信长时间被占用，进而导致通信阻塞</p>
+        <p><img src="http://jclee.cn/MP_1.jpg"><br>如上图，小程序框架中数据绑定的原理示意图，js是一个独立的线程，对数据操作后需要经过线程通信，将数据发送给webview 渲染引擎，最终呈现出效果。线程间通信就会暴露两个缺陷：1. 频繁操作会导致通信阻塞 2. 单次通信传递数据量多大，会导致通信长时间被占用，进而导致通信阻塞</p>
 <p>优化建议：  </p>
 <p>1.对一个数组进行增加数据时只对push或者concat的数据进行setData，以减小setData传递的数据量，减少通信时间</p>
 <pre><code>let arr = [1, 2, 3, 4, 5]
