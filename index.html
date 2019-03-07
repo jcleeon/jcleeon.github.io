@@ -393,6 +393,425 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="//jcleeon.github.io/2019/01/20/ReactivityJS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jclee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="jcleeon">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/20/ReactivityJS/" itemprop="url">响应式JavaScript</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-20T22:16:18+08:00">
+                2019-01-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/software/" itemprop="url" rel="index">
+                    <span itemprop="name">software</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>译自：<a href="https://medium.com/vue-mastery/the-best-explanation-of-javascript-reactivity-fea6112dd80d" target="_blank" rel="noopener">The Best Explanation of JavaScript Reactivity</a></p>
+<p>很多响应式 <code>JavaScript</code> 框架（如：<code>Angular</code>，<code>React</code> 和 <code>Vue</code>）都有他们自己的响应式引擎。理解了什么是响应式和它是如何工作的，能够很好的提高开发技巧，以及更有效的使用前端 <code>JavaScript</code> 框架。</p>
+<h2 id="响应式系统"><a href="#响应式系统" class="headerlink" title="响应式系统"></a>响应式系统</h2><p>当第一次看到 <code>Vue</code> 的响应式系统是如何工作的，你会觉得非常神奇。</p>
+<p>以下面简单的 <code>Vue App</code> 为例：</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-1.png" alt=""></p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-2.png" alt=""></p>
+<p>当 <code>price</code> 发生变化时，<code>Vue</code> 知道它应该至少做三件事</p>
+<ul>
+<li>更新页面上的 <code>price</code> 值</li>
+<li>重新计算表达式 <code>price * quantity</code> ，然后更新到页面上</li>
+<li>再次调用 <code>totalPrice</code> 函数，并更新到页面上</li>
+</ul>
+<p>等等，你一定在想： “<code>Vue</code> 是怎么知道 <code>price</code> 何时发生变化的呢？以及，它是如何跟踪这一切的？”</p>
+<p>当然，<code>JavaScript</code> 通常可不是这样工作的</p>
+<p>如果这对我们来说不是很明显，那么我们面临的最大问题是：<code>JavaScript</code> 语言本身通常不是这样工作的</p>
+<p>例如：执行下面代码片段：</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-3.png" alt=""></p>
+<p>我们看到，在计算 <code>total = price * quantity</code> 时，即使下面将 <code>price</code> 设置为 20，结果仍然是 20.</p>
+<p>在Vue中，每当价格或数量得到更新时，我们都希望total得到更新，我们希望得到：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">total is 40</span><br></pre></td></tr></table></figure>
+<p>很遗憾，<code>JavaScript</code> 并不是响应式的！所以这个结果在现实中是行不通的。为了让 <code>total</code> 可响应，我们需要让 <code>JavaScript</code> 做一些不同的事情。</p>
+<h3 id="问题1"><a href="#问题1" class="headerlink" title="问题1"></a>问题1</h3><p>我们需要保存计算 <code>total</code> 的方法，以便当 <code>price</code> 或 <code>quantity</code> 发生变化时重新运行并得到新的 <code>total</code></p>
+<h3 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h3><p>首先，我们需要一些方法来告诉我们的应用程序，“将我要运行的代码保存下来，我可能会在其他时间调用。” 然后我们将运行代码，如果 <code>price</code> 或 <code>quantity</code> 变量产生变化，再次执行存储下来的代码，进而更新 <code>total</code>。</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-4.png" alt=""></p>
+<p>我们可以通过 <code>record</code> 函数来实现这个过程，这样我们就可以再次运行它。</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-5.png" alt=""></p>
+<p><code>record</code> 函数的定义比较简单：</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-6.png" alt=""></p>
+<p>我们将 <code>targe</code> 函数存储下来（在我们的例子中是：<code>() =&gt; { total = price * quantity }</code>），以便后面的调用，我们可能需要一个 <code>replay</code> （回放）函数，来执行我们存储下来的所有 <code>target</code>。</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-7.png" alt=""></p>
+<p>因此在我们的代码中，我们可以这样：</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-8.png" alt=""></p>
+<p>很简单，对吧？下面是完整的代码，以便你通读一遍并再次加深理解。</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-9.png" alt=""></p>
+<h3 id="问题2"><a href="#问题2" class="headerlink" title="问题2"></a>问题2</h3><p>我们可以根据需要继续进行记录目标（ <code>targets</code> ），但是如果我们有一个可扩展且健壮的解决方案，岂不是更好？可能是一个负责维护 <code>targets</code> 列表的类，当需要它们重新运行时，这些 <code>target</code> 会收到通知</p>
+<h3 id="解决方案：Dep-类（Dependency-Class）"><a href="#解决方案：Dep-类（Dependency-Class）" class="headerlink" title="解决方案：Dep 类（Dependency Class）"></a>解决方案：Dep 类（Dependency Class）</h3><p>解决这个问题的一种方法是，将这种行为封装成一个实现标准观察者模式的类。</p>
+<p>因此，如果我们创建类来管理这些依赖（ <code>dependencies</code> ）（这更近似于 <code>Vue</code> 处理事情的方式），它看起来可能想这样：</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-10.png" alt=""></p>
+<p>注意：我们现在使用 <code>subscribers</code> 取代 <code>storage</code> ，来存储匿名函数。使用 <code>depend</code> 取代 <code>record</code> 函数。使用 <code>notify</code> 取代 <code>replay</code> ，现在来执行以下我们的代码：</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-11.png" alt=""></p>
+<p>依然能够良好运行，并且现在的代码更加可重用。唯一感觉有点奇怪的是 <code>target</code> 的设置 和 运行！</p>
+<h3 id="问题3"><a href="#问题3" class="headerlink" title="问题3"></a>问题3</h3><p>将来我们计划为每个变量创建一个 <code>dep</code> 实例，那么，如果将监听更新的匿名函数封装起来，岂不是更好？或许一个 <code>watcher</code> 函数能够满足我们的需求。</p>
+<p>所以，<code>watcher</code> 可能需要实现如下代码：</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-12.png" alt=""></p>
+<p>然后，我们只进行如下调用：</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-13.png" alt=""></p>
+<h3 id="解决方案：Watcher-函数"><a href="#解决方案：Watcher-函数" class="headerlink" title="解决方案：Watcher 函数"></a>解决方案：Watcher 函数</h3><p>在 <code>watcher</code> 函数里，我们可以做一些简单的事情： </p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-15.png" alt=""></p>
+<p>上面你已经看到了，<code>watcher</code> 函数将 <code>func</code> 函数赋值给了全局变量 <code>target</code> ，调用 <code>dep.depend()</code> ，添加 <code>target</code> 为 订阅者，调用 <code>target</code> 初始化 <code>total</code>，最后重置 <code>target</code></p>
+<p>现在我们运行下面的代码：</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-16.png" alt=""></p>
+<p>你可能在想，为什么要把 <code>total</code> 设置为全局变量，而不是在需要它的时候把它设置为局部变量呢？嗯，这个是有充分的理由的，在后面将会体现出来。</p>
+<h3 id="问题4"><a href="#问题4" class="headerlink" title="问题4"></a>问题4</h3><p>现在我们有了 <code>Dep</code> 类，但是我们想让每个变量都有自己的 <code>Dep</code> 实例。在我们继续这个话题前，先来了解一下属性。</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-17.png" alt=""></p>
+<p>我们假设一下，<code>data</code> 的每个属性（ <code>price</code> 和 <code>quantity</code>）都有自己的内部 <code>Dep</code> 类</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-18.png" alt=""></p>
+<p> <code>watcher</code> 函数的调用可以变成如下：</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-19.png" alt=""></p>
+<p>当 <code>data.price</code> 被访问时，我们希望 <code>price</code> 属性的 <code>Dep</code> 类 能够将匿名函数添加（ <code>dep.depend()</code> ）到订阅者列表（ <code>subscribers</code> ）中，当 <code>data.quantity</code> 被访问时，我们也希望 <code>quantity</code> 属性的 <code>Dep</code> 类 能够将匿名函数添加（ <code>dep.depend()</code> ）到订阅者列表（ <code>subscribers</code> ）中。</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-20.png" alt=""></p>
+<p>另外，如果我们还有其他的匿名函数，该函数中只有 <code>data.price</code> 被访问，那么我们只希望对 <code>price</code> 属性的 <code>Dep</code> 类进行添加订阅者。</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-21.png" alt=""></p>
+<p>那么，<code>price</code> 的所有订阅者（<code>target</code>）已经添加完毕了，应该什么时候调用 <code>dep.notify()</code> 呢？显然，应该在 price 更新的时候。因此我们想要得到的效果，就像下面这样：</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-23.png" alt=""></p>
+<p>上面可以看到，我们是不需要显式的调用 <code>dep.notify()</code> 的</p>
+<p>为此，我们需要方法来劫持对<code>data</code> 属性（ <code>price</code> 和 <code>quantity</code> ）的访问。这样一来，当属性被访问时，我们能够将 <code>target</code> 存储进订阅者列表 <code>subscribers</code>， 并且当属性值发生变化时能够执行存储在订阅者列表中的相应 <code>target</code> 函数。</p>
+<h3 id="解决方案：Object-defineProperty"><a href="#解决方案：Object-defineProperty" class="headerlink" title="解决方案：Object.defineProperty()"></a>解决方案：Object.defineProperty()</h3><p> <code>Object.defineProperty()</code> 函数，从 <code>ES5</code> 中被引入。在开始展示它怎样与 <code>Dep</code> 一起使用 前，我们需要先了解下 <code>Object.defineProperty()</code>  的用法，它允许我们定义属性的 <code>setter</code> 和 <code>getter</code>以及属性的一些其他特性（这里只介绍  <code>get</code> 和 <code>set</code> ）。如下：</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-24.png" alt=""></p>
+<p>可以看到，它实际上只打印了两条信息，并未获取 <code>get</code> 或者设置 <code>set</code> 任何值，因为，我们在 <code>Object.defineProperty()</code> 中定义的 <code>set</code> 和 <code>get</code> 会覆盖原生的 <code>get</code> 和 <code>get</code>。现在我们进行实现以下原生的功能，对于 <code>get()</code> ，我们期望返回一个值，对于 <code>set()</code> 我们也需要把属性值更新，所以我们需要一个 内部变量 <code>internalValue</code> 作为中间变量，来存储当前的 <code>price</code> 的值。</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-25-1.png" alt=""></p>
+<p>所以，我们还是有方法能够在属性被访问 <code>get</code> 和被设置 <code>set</code> 值的时候得到通知。使用<code>Object.keys(data)</code>，并且对 <code>data</code>  的属性列表进行递归 <code>forEach</code>，可以对 <code>data</code> 的所有属性，做同样的处理，不吗？</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-26.png" alt=""></p>
+<h3 id="将两种方法结合起来"><a href="#将两种方法结合起来" class="headerlink" title="将两种方法结合起来"></a>将两种方法结合起来</h3><p><img src="http://jclee.cn/ReactivityJS/code-seg-27.png" alt=""></p>
+<p>像上面的代码片段（匿名函数 <code>target</code> 中的代码），当执行并获取 <code>price</code> 的值时，我们 <code>price</code> 能够记住这个匿名函数 <code>target</code> ，这样一来，如果 <code>price</code> 发生变化，或者被设置新的值，就会触发这个函数重新调用，因为它知道这行代码依赖了它。所以我们可以这样想：</p>
+<ul>
+<li>Get =&gt; 记住这个匿名函数，我们将会在它发生变化时再次调用</li>
+<li>Set =&gt; 调用保存的匿名函数，更新它的值</li>
+</ul>
+<p>或者以我们的 <code>Dep</code> 类为例</p>
+<ul>
+<li>Price Get =&gt; 调用 <code>dep.depend()</code> 来保存当前的 <code>target</code></li>
+<li>Price Set =&gt; 调用 <code>price</code> 的 <code>dep.notify()</code>，重新调用所以依赖 <code>price</code> 的 <code>target</code></li>
+</ul>
+<p>这和这两种想法，我们的最终代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">let</span> data = &#123; <span class="attr">price</span>: <span class="number">10</span>, <span class="attr">quantity</span>: <span class="number">2</span> &#125;</span><br><span class="line"><span class="keyword">let</span> target = <span class="literal">null</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dep</span> </span>&#123; <span class="comment">// 依赖管理类</span></span><br><span class="line">  <span class="keyword">constructor</span>() &#123;</span><br><span class="line">    <span class="comment">// 用于存储依赖的targets，当执行notify()时</span></span><br><span class="line">    <span class="comment">// 所有依赖的 target 被调用</span></span><br><span class="line">    <span class="keyword">this</span>.subscribers = [] </span><br><span class="line">  &#125;</span><br><span class="line">  depend() &#123; <span class="comment">// 代替前面使用的 record 函数</span></span><br><span class="line">    <span class="keyword">if</span> (target &amp;&amp; !<span class="keyword">this</span>.subscribers.includes( target )) &#123;</span><br><span class="line">      <span class="comment">// 只有当 target 存在且未被订阅过时，进行订阅</span></span><br><span class="line">      <span class="keyword">this</span>.subscribers.push( target );</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  notify() &#123; <span class="comment">// 代替前面的 replay 函数</span></span><br><span class="line">    <span class="comment">// 执行所有的 target（observer）</span></span><br><span class="line">    <span class="keyword">this</span>.subscribers.forEach(<span class="function"><span class="params">sub</span> =&gt;</span> sub());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">Object</span>.keys(data).forEach(<span class="function"><span class="params">key</span> =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> internalValue = data[ key ]</span><br><span class="line">  <span class="comment">// 每个属性内置一个 dep 实例，当属性发生变化时，只触发自带的 dep 实例依赖的所有 target</span></span><br><span class="line">  <span class="keyword">const</span> dep = <span class="keyword">new</span> Dep()</span><br><span class="line"></span><br><span class="line">  <span class="built_in">Object</span>.defineProperty(data, key, &#123;</span><br><span class="line">    get() &#123; </span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">`Getting price: <span class="subst">$&#123;internalValue&#125;</span>`</span>)</span><br><span class="line">      <span class="comment">// 调用get时存储 target </span></span><br><span class="line">      dep.depend()</span><br><span class="line">      <span class="keyword">return</span> internalValue</span><br><span class="line">    &#125;,</span><br><span class="line">    set(newVal) &#123; </span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">`Setting price to: <span class="subst">$&#123;newVal&#125;</span>`</span>)</span><br><span class="line">      internalValue = newVal</span><br><span class="line">      <span class="comment">// 值发生变化时，发送通知，触发当前dep存储的所有 target 调用</span></span><br><span class="line">      dep.notify()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">watcher</span>(<span class="params">func</span>) </span>&#123;</span><br><span class="line">  target = func</span><br><span class="line">  target()</span><br><span class="line">  target = <span class="literal">null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">watcher(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  data.total = data.price * data.quantity</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(data.total)</span><br><span class="line">data.price = <span class="number">20</span></span><br><span class="line"><span class="built_in">console</span>.log(data.total)</span><br><span class="line">data.quantity = <span class="number">3</span></span><br><span class="line"><span class="built_in">console</span>.log(data.total)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 运行结果如下：</span></span><br><span class="line"><span class="comment">// Getting price: 10</span></span><br><span class="line"><span class="comment">// Getting price: 2</span></span><br><span class="line"><span class="comment">// 20</span></span><br><span class="line"><span class="comment">// Setting price to: 20</span></span><br><span class="line"><span class="comment">// Getting price: 20</span></span><br><span class="line"><span class="comment">// Getting price: 2</span></span><br><span class="line"><span class="comment">// 40</span></span><br><span class="line"><span class="comment">// Setting price to: 3</span></span><br><span class="line"><span class="comment">// Getting price: 20</span></span><br><span class="line"><span class="comment">// Getting price: 3</span></span><br><span class="line"><span class="comment">// 60</span></span><br></pre></td></tr></table></figure>
+<p>这正是我们希望得到的！ <code>price</code> 和 <code>quantity</code> 属性变成了响应式的！无论何时，<code>price</code> 或者 <code>quantity</code> 发生变化时，我们的代码总是能够重新执行，并触发更新。</p>
+<p>现在，Vue文档中的插图看上去应该更加明了了</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-28.png" alt=""></p>
+<p>看到包含 <code>setter</code> 和 <code>getter</code> 的紫色圆饼了吗？它看起来很眼熟吧！每一个组件实例都要一个 <code>Watcher</code>实例（蓝色圆饼），它从 getters 中收集依赖（红线），后面一旦 <code>setter</code> 被调用，他就会通知（notify）监视器（watcher）触发更新，进而重新渲染组件。下面是我自己的注解图片：</p>
+<p><img src="http://jclee.cn/ReactivityJS/code-seg-29-1.png" alt=""></p>
+<p>现在看起来是不是，更明白了？</p>
+<p>显然，Vue在幕后是如何做到这一点的更为复杂，但我们现在对其响应式有了基本的认识，对吧！</p>
+<h3 id="我们学到了什么？"><a href="#我们学到了什么？" class="headerlink" title="我们学到了什么？"></a>我们学到了什么？</h3><ul>
+<li>如何创建一个 <code>Dep</code> 类，来收集依赖项(depend)并重新运行所有依赖项(notify)</li>
+<li>如何创建一个 <code>watcher</code> 来管理我们正在运行的，可能需要被添加为一个依赖的代码（ <code>target</code> ）</li>
+<li>如何使用 <code>Object.defineProperty()</code> 来创建 <code>setter</code> 和 <code>getter</code></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="//jcleeon.github.io/2019/01/13/递归/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jclee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="jcleeon">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/13/递归/" itemprop="url">递归</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-13T22:41:42+08:00">
+                2019-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/数据结构与算法/" itemprop="url" rel="index">
+                    <span itemprop="name">数据结构与算法</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>递归并不属于什么语言的特性，只是一种编程技巧。</p>
+<p>对于递归的使用，很多初学者都停留在了解，但不深入，并且很难达到熟练使用的程度。</p>
+<p>怎样才能更好的理解递归，并熟练使用呢，这是本篇深入学习的目的。</p>
+<h4 id="递归是什么？"><a href="#递归是什么？" class="headerlink" title="递归是什么？"></a>递归是什么？</h4><p>递归，是一种程序设计思想，从使用形式上看，是函数的自调用，即在函数的内部调用自身。</p>
+<p>案例：计算 n 的阶乘</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">recursion</span>(<span class="params">n</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (n === <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> n * recursion( n - <span class="number">1</span> );</span><br><span class="line">&#125;</span><br><span class="line">recursion(<span class="number">4</span>) </span><br><span class="line"><span class="comment">// 4 * 3 * 2 * 1 = 24</span></span><br></pre></td></tr></table></figure>
+<p>从上面我们看到，<code>recursion</code> 函数的内部调用了 <code>recursion()</code>，自调用的形式就是递归的经典使用形式。</p>
+<p>注：递归函数内部必须包含终止条件，即递归的出口。否则会造死循环。</p>
+<h4 id="递归在底层是如何执行的呢？"><a href="#递归在底层是如何执行的呢？" class="headerlink" title="递归在底层是如何执行的呢？"></a>递归在底层是如何执行的呢？</h4><p>先来看一下程序中的函数在内存中什么样的，如下图所示：</p>
+<p><img src="http://jclee.cn/vue-dynamic-component/3.png" width="240"></p>
+<p>如上图所示，程序中的函数，会存储在 <code>代码段</code> 中，代码段只会保存一份相同的代码。</p>
+<p>对于递归来说，每个函数其实都是相同的，因此递归函数会被放到栈中，每次递归的函数（不一定只针对递归函数）被存储到栈帧中，依次排列就形成了一个 <code>调用栈</code>。</p>
+<p>那么函数为什么要存储在栈中而不是堆中呢？</p>
+<p>我们知道，函数的执行顺序其实是及外的，即内层函数全部执行完毕（释放内存），外层函数才能得到释放，这就适用于栈的先进后出的逻辑。</p>
+<p>看一下每个栈帧长什么样：</p>
+<p><img src="http://jclee.cn/vue-dynamic-component/4.png" width="240"></p>
+<p>可以看到，忽略其他的内容，输入参数和返回值，代表的就是一个函数调用。</p>
+<p>通过上面对函数在内存的简单了解，我们可以把递归函数的调用栈代换成下面这样：</p>
+<p><img src="http://jclee.cn/vue-dynamic-component/5.png" width="360"></p>
+<p>注：因为压栈是从栈底开始，栈底在最上面，那么图中的函数栈，自然也是从上往下的生长。</p>
+<p>理解了函数调用的逻辑，我们可以梳理一下递归函数的执行逻辑：</p>
+<p>递归函数开时，从 <code>recursion(4)</code> 开始调用（栈帧1），其返回值是 <code>4 * recursion(3)</code>; 但是这时我们还不知道函数 <code>recursion(3)</code> 的返回值是多少，所以需要新的栈帧来计算 <code>recursion(3)</code>，那么新的栈帧计算的返回值是 <code>3 * recursion(2)</code>，这时 <code>recursion(2)</code>的返回值又不知道了，所以又需要新的栈帧来计算 <code>recursion(2)</code>，整个过程就是如此循环下去，直到达到终止条件 <code>recursion(1) = 1</code> ，有了明确的返回值，然后每个栈帧开始依次出栈，最终就能计算出 <code>recursion(4)</code> 的真实返回值了 。</p>
+<p>整个入栈过程就是这样的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">recursion(<span class="number">4</span>) = <span class="number">4</span> * recursion(<span class="number">3</span>)</span><br><span class="line">recursion(<span class="number">3</span>) = <span class="number">3</span> * recursion(<span class="number">2</span>)</span><br><span class="line">recursion(<span class="number">2</span>) = <span class="number">2</span> * recursion(<span class="number">1</span>)</span><br><span class="line">recursion(<span class="number">1</span>) = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>出栈过程是这样的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">recursion(<span class="number">1</span>) = <span class="number">1</span></span><br><span class="line">recursion(<span class="number">2</span>) = <span class="number">2</span> * recursion(<span class="number">1</span>) = <span class="number">2</span> * <span class="number">1</span></span><br><span class="line">recursion(<span class="number">3</span>) = <span class="number">3</span> * recursion(<span class="number">2</span>) = <span class="number">3</span> * <span class="number">2</span> * <span class="number">1</span></span><br><span class="line">recursion(<span class="number">4</span>) = <span class="number">4</span> * recursion(<span class="number">3</span>) = <span class="number">4</span> * <span class="number">3</span> * <span class="number">2</span> * <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h4 id="使用尾递归防止爆栈"><a href="#使用尾递归防止爆栈" class="headerlink" title="使用尾递归防止爆栈"></a>使用尾递归防止爆栈</h4><p>每个栈的容量是有限的，且每个栈帧都会占据一些空间，如果递归的太深（维护的栈帧数量过多）的话，则很可能会导致挤爆一个栈。</p>
+<p>再来回顾一下我们的递归算法</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">recursion(n) = n * recursion(n - <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>从上面的栈帧图我们可以看到，每个栈不仅需要记录当前的 n 值，好需要记录下一个函数栈的返回值，然后才能计算出当前栈帧的结果，所以对于上面的算法，使用多个栈是无法避免的。</p>
+<p>为了防止爆栈情况的发生，我们使用尾递归的方式，改下一下我们的算法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">recursion</span>(<span class="params">n, result</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (n === <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> recursion(n - <span class="number">1</span>, n * result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，之前的 <code>n * recursion(n - 1)</code> 替换成了 <code>recursion(n - 1, n * result)</code>，而且函数新增了一个参数 <code>result</code>  。</p>
+<p>先看一下计算过程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">recursion(4, 1)</span><br><span class="line">= recursion(3, 4 * 1)</span><br><span class="line">= recursion(2, 3 * 4 * 1)</span><br><span class="line">= recursion(1, 2 * 3 * 4 * 1)</span><br><span class="line">= recursion(1, 24)</span><br><span class="line">= 24</span><br></pre></td></tr></table></figure>
+<p>通过上面的计算过程，会发现，每个函数的执行，都不在依赖任何变量和返回值，所有的值，只是通过传参的方式计算得出。跟之前的算法过程进行对比，能够看出，当计算到 <code>recursion(1, 24)</code> ，整个计算过程已经技术，不需要再退回到 <code>recursion(2) = 2 * recursion(1) = 2 * 1</code> 这个函数了不是吗？</p>
+<p>这就是 <code>尾递归</code> 的妙处，那么它是怎么做到不会发生爆栈的呢？</p>
+<p>当我们使用 <code>尾递归</code> 进行计算时，计算机是能够发现这种情况的，并针对 <code>尾递归</code> 的情况，只需要对递归函数分配一个栈帧就可以搞定这些计算，而且不需要关心 n 的值的大小，以及递归的深度，因为我们不在需要多个栈帧进行协作计算了。</p>
+<p>那么具体什么样的递归，才属于尾递归呢？</p>
+<p>当递归调用时函数体中最后执行的语句，且该语句不参与任何计算（如，<code>return n * recursion(n - 1)</code>就不是尾递归，因为递归函数在调用时，跟变量 n 形成了计算表达式。），并且返回值不属于表达式的一部分时，这个递归才是 <code>尾递归</code></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="//jcleeon.github.io/2019/01/02/小程序常见问题整理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1232,187 +1651,6 @@ this.setData({
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="//jcleeon.github.io/2018/11/13/递归/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="jclee">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="jcleeon">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/11/13/递归/" itemprop="url">递归</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-13T22:41:42+08:00">
-                2018-11-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/数据结构与算法/" itemprop="url" rel="index">
-                    <span itemprop="name">数据结构与算法</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>递归并不属于什么语言的特性，只是一种编程技巧。</p>
-<p>对于递归的使用，很多初学者都停留在了解，但不深入，并且很难达到熟练使用的程度。</p>
-<p>怎样才能更好的理解递归，并熟练使用呢，这是本篇深入学习的目的。</p>
-<h4 id="递归是什么？"><a href="#递归是什么？" class="headerlink" title="递归是什么？"></a>递归是什么？</h4><p>递归，是一种程序设计思想，从使用形式上看，是函数的自调用，即在函数的内部调用自身。</p>
-<p>案例：计算 n 的阶乘</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">recursion</span>(<span class="params">n</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (n === <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> n * recursion( n - <span class="number">1</span> );</span><br><span class="line">&#125;</span><br><span class="line">recursion(<span class="number">4</span>) </span><br><span class="line"><span class="comment">// 4 * 3 * 2 * 1 = 24</span></span><br></pre></td></tr></table></figure>
-<p>从上面我们看到，<code>recursion</code> 函数的内部调用了 <code>recursion()</code>，自调用的形式就是递归的经典使用形式。</p>
-<p>注：递归函数内部必须包含终止条件，即递归的出口。否则会造死循环。</p>
-<h4 id="递归在底层是如何执行的呢？"><a href="#递归在底层是如何执行的呢？" class="headerlink" title="递归在底层是如何执行的呢？"></a>递归在底层是如何执行的呢？</h4><p>先来看一下程序中的函数在内存中什么样的，如下图所示：</p>
-<p><img src="http://jclee.cn/vue-dynamic-component/3.png" width="240"></p>
-<p>如上图所示，程序中的函数，会存储在 <code>代码段</code> 中，代码段只会保存一份相同的代码。</p>
-<p>对于递归来说，每个函数其实都是相同的，因此递归函数会被放到栈中，每次递归的函数（不一定只针对递归函数）被存储到栈帧中，依次排列就形成了一个 <code>调用栈</code>。</p>
-<p>那么函数为什么要存储在栈中而不是堆中呢？</p>
-<p>我们知道，函数的执行顺序其实是及外的，即内层函数全部执行完毕（释放内存），外层函数才能得到释放，这就适用于栈的先进后出的逻辑。</p>
-<p>看一下每个栈帧长什么样：</p>
-<p><img src="http://jclee.cn/vue-dynamic-component/4.png" width="240"></p>
-<p>可以看到，忽略其他的内容，输入参数和返回值，代表的就是一个函数调用。</p>
-<p>通过上面对函数在内存的简单了解，我们可以把递归函数的调用栈代换成下面这样：</p>
-<p><img src="http://jclee.cn/vue-dynamic-component/5.png" width="360"></p>
-<p>注：因为压栈是从栈底开始，栈底在最上面，那么图中的函数栈，自然也是从上往下的生长。</p>
-<p>理解了函数调用的逻辑，我们可以梳理一下递归函数的执行逻辑：</p>
-<p>递归函数开时，从 <code>recursion(4)</code> 开始调用（栈帧1），其返回值是 <code>4 * recursion(3)</code>; 但是这时我们还不知道函数 <code>recursion(3)</code> 的返回值是多少，所以需要新的栈帧来计算 <code>recursion(3)</code>，那么新的栈帧计算的返回值是 <code>3 * recursion(2)</code>，这时 <code>recursion(2)</code>的返回值又不知道了，所以又需要新的栈帧来计算 <code>recursion(2)</code>，整个过程就是如此循环下去，直到达到终止条件 <code>recursion(1) = 1</code> ，有了明确的返回值，然后每个栈帧开始依次出栈，最终就能计算出 <code>recursion(4)</code> 的真实返回值了 。</p>
-<p>整个入栈过程就是这样的：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">recursion(<span class="number">4</span>) = <span class="number">4</span> * recursion(<span class="number">3</span>)</span><br><span class="line">recursion(<span class="number">3</span>) = <span class="number">3</span> * recursion(<span class="number">2</span>)</span><br><span class="line">recursion(<span class="number">2</span>) = <span class="number">2</span> * recursion(<span class="number">1</span>)</span><br><span class="line">recursion(<span class="number">1</span>) = <span class="number">1</span></span><br></pre></td></tr></table></figure>
-<p>出栈过程是这样的：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">recursion(<span class="number">1</span>) = <span class="number">1</span></span><br><span class="line">recursion(<span class="number">2</span>) = <span class="number">2</span> * recursion(<span class="number">1</span>) = <span class="number">2</span> * <span class="number">1</span></span><br><span class="line">recursion(<span class="number">3</span>) = <span class="number">3</span> * recursion(<span class="number">2</span>) = <span class="number">3</span> * <span class="number">2</span> * <span class="number">1</span></span><br><span class="line">recursion(<span class="number">4</span>) = <span class="number">4</span> * recursion(<span class="number">3</span>) = <span class="number">4</span> * <span class="number">3</span> * <span class="number">2</span> * <span class="number">1</span></span><br></pre></td></tr></table></figure>
-<h4 id="使用尾递归防止爆栈"><a href="#使用尾递归防止爆栈" class="headerlink" title="使用尾递归防止爆栈"></a>使用尾递归防止爆栈</h4><p>每个栈的容量是有限的，且每个栈帧都会占据一些空间，如果递归的太深（维护的栈帧数量过多）的话，则很可能会导致挤爆一个栈。</p>
-<p>再来回顾一下我们的递归算法</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">recursion(n) = n * recursion(n - <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-<p>从上面的栈帧图我们可以看到，每个栈不仅需要记录当前的 n 值，好需要记录下一个函数栈的返回值，然后才能计算出当前栈帧的结果，所以对于上面的算法，使用多个栈是无法避免的。</p>
-<p>为了防止爆栈情况的发生，我们使用尾递归的方式，改下一下我们的算法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">recursion</span>(<span class="params">n, result</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (n === <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> recursion(n - <span class="number">1</span>, n * result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看到，之前的 <code>n * recursion(n - 1)</code> 替换成了 <code>recursion(n - 1, n * result)</code>，而且函数新增了一个参数 <code>result</code>  。</p>
-<p>先看一下计算过程：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">recursion(4, 1)</span><br><span class="line">= recursion(3, 4 * 1)</span><br><span class="line">= recursion(2, 3 * 4 * 1)</span><br><span class="line">= recursion(1, 2 * 3 * 4 * 1)</span><br><span class="line">= recursion(1, 24)</span><br><span class="line">= 24</span><br></pre></td></tr></table></figure>
-<p>通过上面的计算过程，会发现，每个函数的执行，都不在依赖任何变量和返回值，所有的值，只是通过传参的方式计算得出。跟之前的算法过程进行对比，能够看出，当计算到 <code>recursion(1, 24)</code> ，整个计算过程已经技术，不需要再退回到 <code>recursion(2) = 2 * recursion(1) = 2 * 1</code> 这个函数了不是吗？</p>
-<p>这就是 <code>尾递归</code> 的妙处，那么它是怎么做到不会发生爆栈的呢？</p>
-<p>当我们使用 <code>尾递归</code> 进行计算时，计算机是能够发现这种情况的，并针对 <code>尾递归</code> 的情况，只需要对递归函数分配一个栈帧就可以搞定这些计算，而且不需要关心 n 的值的大小，以及递归的深度，因为我们不在需要多个栈帧进行协作计算了。</p>
-<p>那么具体什么样的递归，才属于尾递归呢？</p>
-<p>当递归调用时函数体中最后执行的语句，且该语句不参与任何计算（如，<code>return n * recursion(n - 1)</code>就不是尾递归，因为递归函数在调用时，跟变量 n 形成了计算表达式。），并且返回值不属于表达式的一部分时，这个递归才是 <code>尾递归</code></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="//jcleeon.github.io/2018/10/09/ES6-Proxy/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1826,244 +2064,6 @@ this.setData({
 <p>那么，我们可能会想，当我执行一个播放音乐的软件时，点击播放时，计算机开始播放音乐，这不就是对硬件中的声卡进行操作的吗？</p>
 <p>我们的疑问其实就是<code>陷阱</code>的作用，<code>陷阱</code> 可以使应用程序由<code>用户态</code>陷入<code>内核态</code>，把控制转交给操作系统，使得应用程序可以调用内核函数和使用硬件，从而间接的获得操作系统操作硬件的权限。</p>
 <p>如我们播放音乐时，通过调用内核（操作系统）提供的接口，来告诉操作系统我们要播放音频了，那么操作系统就知道它接下来该怎么做了，最终我们的音乐按照我们的操作顺利的播放了。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="//jcleeon.github.io/2018/10/01/ReactivityJS/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="jclee">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="jcleeon">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/01/ReactivityJS/" itemprop="url">响应式JavaScript</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-01T22:16:18+08:00">
-                2018-10-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/software/" itemprop="url" rel="index">
-                    <span itemprop="name">software</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>译自：<a href="https://medium.com/vue-mastery/the-best-explanation-of-javascript-reactivity-fea6112dd80d" target="_blank" rel="noopener">The Best Explanation of JavaScript Reactivity</a></p>
-<p>很多响应式 <code>JavaScript</code> 框架（如：<code>Angular</code>，<code>React</code> 和 <code>Vue</code>）都有他们自己的响应式引擎。理解了什么是响应式和它是如何工作的，能够很好的提高开发技巧，以及更有效的使用前端 <code>JavaScript</code> 框架。</p>
-<h2 id="响应式系统"><a href="#响应式系统" class="headerlink" title="响应式系统"></a>响应式系统</h2><p>当第一次看到 <code>Vue</code> 的响应式系统是如何工作的，你会觉得非常神奇。</p>
-<p>以下面简单的 <code>Vue App</code> 为例：</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-1.png" alt=""></p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-2.png" alt=""></p>
-<p>当 <code>price</code> 发生变化时，<code>Vue</code> 知道它应该至少做三件事</p>
-<ul>
-<li>更新页面上的 <code>price</code> 值</li>
-<li>重新计算表达式 <code>price * quantity</code> ，然后更新到页面上</li>
-<li>再次调用 <code>totalPrice</code> 函数，并更新到页面上</li>
-</ul>
-<p>等等，你一定在想： “<code>Vue</code> 是怎么知道 <code>price</code> 何时发生变化的呢？以及，它是如何跟踪这一切的？”</p>
-<p>当然，<code>JavaScript</code> 通常可不是这样工作的</p>
-<p>如果这对我们来说不是很明显，那么我们面临的最大问题是：<code>JavaScript</code> 语言本身通常不是这样工作的</p>
-<p>例如：执行下面代码片段：</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-3.png" alt=""></p>
-<p>我们看到，在计算 <code>total = price * quantity</code> 时，即使下面将 <code>price</code> 设置为 20，结果仍然是 20.</p>
-<p>在Vue中，每当价格或数量得到更新时，我们都希望total得到更新，我们希望得到：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">total is 40</span><br></pre></td></tr></table></figure>
-<p>很遗憾，<code>JavaScript</code> 并不是响应式的！所以这个结果在现实中是行不通的。为了让 <code>total</code> 可响应，我们需要让 <code>JavaScript</code> 做一些不同的事情。</p>
-<h3 id="问题1"><a href="#问题1" class="headerlink" title="问题1"></a>问题1</h3><p>我们需要保存计算 <code>total</code> 的方法，以便当 <code>price</code> 或 <code>quantity</code> 发生变化时重新运行并得到新的 <code>total</code></p>
-<h3 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h3><p>首先，我们需要一些方法来告诉我们的应用程序，“将我要运行的代码保存下来，我可能会在其他时间调用。” 然后我们将运行代码，如果 <code>price</code> 或 <code>quantity</code> 变量产生变化，再次执行存储下来的代码，进而更新 <code>total</code>。</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-4.png" alt=""></p>
-<p>我们可以通过 <code>record</code> 函数来实现这个过程，这样我们就可以再次运行它。</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-5.png" alt=""></p>
-<p><code>record</code> 函数的定义比较简单：</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-6.png" alt=""></p>
-<p>我们将 <code>targe</code> 函数存储下来（在我们的例子中是：<code>() =&gt; { total = price * quantity }</code>），以便后面的调用，我们可能需要一个 <code>replay</code> （回放）函数，来执行我们存储下来的所有 <code>target</code>。</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-7.png" alt=""></p>
-<p>因此在我们的代码中，我们可以这样：</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-8.png" alt=""></p>
-<p>很简单，对吧？下面是完整的代码，以便你通读一遍并再次加深理解。</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-9.png" alt=""></p>
-<h3 id="问题2"><a href="#问题2" class="headerlink" title="问题2"></a>问题2</h3><p>我们可以根据需要继续进行记录目标（ <code>targets</code> ），但是如果我们有一个可扩展且健壮的解决方案，岂不是更好？可能是一个负责维护 <code>targets</code> 列表的类，当需要它们重新运行时，这些 <code>target</code> 会收到通知</p>
-<h3 id="解决方案：Dep-类（Dependency-Class）"><a href="#解决方案：Dep-类（Dependency-Class）" class="headerlink" title="解决方案：Dep 类（Dependency Class）"></a>解决方案：Dep 类（Dependency Class）</h3><p>解决这个问题的一种方法是，将这种行为封装成一个实现标准观察者模式的类。</p>
-<p>因此，如果我们创建类来管理这些依赖（ <code>dependencies</code> ）（这更近似于 <code>Vue</code> 处理事情的方式），它看起来可能想这样：</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-10.png" alt=""></p>
-<p>注意：我们现在使用 <code>subscribers</code> 取代 <code>storage</code> ，来存储匿名函数。使用 <code>depend</code> 取代 <code>record</code> 函数。使用 <code>notify</code> 取代 <code>replay</code> ，现在来执行以下我们的代码：</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-11.png" alt=""></p>
-<p>依然能够良好运行，并且现在的代码更加可重用。唯一感觉有点奇怪的是 <code>target</code> 的设置 和 运行！</p>
-<h3 id="问题3"><a href="#问题3" class="headerlink" title="问题3"></a>问题3</h3><p>将来我们计划为每个变量创建一个 <code>dep</code> 实例，那么，如果将监听更新的匿名函数封装起来，岂不是更好？或许一个 <code>watcher</code> 函数能够满足我们的需求。</p>
-<p>所以，<code>watcher</code> 可能需要实现如下代码：</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-12.png" alt=""></p>
-<p>然后，我们只进行如下调用：</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-13.png" alt=""></p>
-<h3 id="解决方案：Watcher-函数"><a href="#解决方案：Watcher-函数" class="headerlink" title="解决方案：Watcher 函数"></a>解决方案：Watcher 函数</h3><p>在 <code>watcher</code> 函数里，我们可以做一些简单的事情： </p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-15.png" alt=""></p>
-<p>上面你已经看到了，<code>watcher</code> 函数将 <code>func</code> 函数赋值给了全局变量 <code>target</code> ，调用 <code>dep.depend()</code> ，添加 <code>target</code> 为 订阅者，调用 <code>target</code> 初始化 <code>total</code>，最后重置 <code>target</code></p>
-<p>现在我们运行下面的代码：</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-16.png" alt=""></p>
-<p>你可能在想，为什么要把 <code>total</code> 设置为全局变量，而不是在需要它的时候把它设置为局部变量呢？嗯，这个是有充分的理由的，在后面将会体现出来。</p>
-<h3 id="问题4"><a href="#问题4" class="headerlink" title="问题4"></a>问题4</h3><p>现在我们有了 <code>Dep</code> 类，但是我们想让每个变量都有自己的 <code>Dep</code> 实例。在我们继续这个话题前，先来了解一下属性。</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-17.png" alt=""></p>
-<p>我们假设一下，<code>data</code> 的每个属性（ <code>price</code> 和 <code>quantity</code>）都有自己的内部 <code>Dep</code> 类</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-18.png" alt=""></p>
-<p> <code>watcher</code> 函数的调用可以变成如下：</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-19.png" alt=""></p>
-<p>当 <code>data.price</code> 被访问时，我们希望 <code>price</code> 属性的 <code>Dep</code> 类 能够将匿名函数添加（ <code>dep.depend()</code> ）到订阅者列表（ <code>subscribers</code> ）中，当 <code>data.quantity</code> 被访问时，我们也希望 <code>quantity</code> 属性的 <code>Dep</code> 类 能够将匿名函数添加（ <code>dep.depend()</code> ）到订阅者列表（ <code>subscribers</code> ）中。</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-20.png" alt=""></p>
-<p>另外，如果我们还有其他的匿名函数，该函数中只有 <code>data.price</code> 被访问，那么我们只希望对 <code>price</code> 属性的 <code>Dep</code> 类进行添加订阅者。</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-21.png" alt=""></p>
-<p>那么，<code>price</code> 的所有订阅者（<code>target</code>）已经添加完毕了，应该什么时候调用 <code>dep.notify()</code> 呢？显然，应该在 price 更新的时候。因此我们想要得到的效果，就像下面这样：</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-23.png" alt=""></p>
-<p>上面可以看到，我们是不需要显式的调用 <code>dep.notify()</code> 的</p>
-<p>为此，我们需要方法来劫持对<code>data</code> 属性（ <code>price</code> 和 <code>quantity</code> ）的访问。这样一来，当属性被访问时，我们能够将 <code>target</code> 存储进订阅者列表 <code>subscribers</code>， 并且当属性值发生变化时能够执行存储在订阅者列表中的相应 <code>target</code> 函数。</p>
-<h3 id="解决方案：Object-defineProperty"><a href="#解决方案：Object-defineProperty" class="headerlink" title="解决方案：Object.defineProperty()"></a>解决方案：Object.defineProperty()</h3><p> <code>Object.defineProperty()</code> 函数，从 <code>ES5</code> 中被引入。在开始展示它怎样与 <code>Dep</code> 一起使用 前，我们需要先了解下 <code>Object.defineProperty()</code>  的用法，它允许我们定义属性的 <code>setter</code> 和 <code>getter</code>以及属性的一些其他特性（这里只介绍  <code>get</code> 和 <code>set</code> ）。如下：</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-24.png" alt=""></p>
-<p>可以看到，它实际上只打印了两条信息，并未获取 <code>get</code> 或者设置 <code>set</code> 任何值，因为，我们在 <code>Object.defineProperty()</code> 中定义的 <code>set</code> 和 <code>get</code> 会覆盖原生的 <code>get</code> 和 <code>get</code>。现在我们进行实现以下原生的功能，对于 <code>get()</code> ，我们期望返回一个值，对于 <code>set()</code> 我们也需要把属性值更新，所以我们需要一个 内部变量 <code>internalValue</code> 作为中间变量，来存储当前的 <code>price</code> 的值。</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-25-1.png" alt=""></p>
-<p>所以，我们还是有方法能够在属性被访问 <code>get</code> 和被设置 <code>set</code> 值的时候得到通知。使用<code>Object.keys(data)</code>，并且对 <code>data</code>  的属性列表进行递归 <code>forEach</code>，可以对 <code>data</code> 的所有属性，做同样的处理，不吗？</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-26.png" alt=""></p>
-<h3 id="将两种方法结合起来"><a href="#将两种方法结合起来" class="headerlink" title="将两种方法结合起来"></a>将两种方法结合起来</h3><p><img src="http://jclee.cn/ReactivityJS/code-seg-27.png" alt=""></p>
-<p>像上面的代码片段（匿名函数 <code>target</code> 中的代码），当执行并获取 <code>price</code> 的值时，我们 <code>price</code> 能够记住这个匿名函数 <code>target</code> ，这样一来，如果 <code>price</code> 发生变化，或者被设置新的值，就会触发这个函数重新调用，因为它知道这行代码依赖了它。所以我们可以这样想：</p>
-<ul>
-<li>Get =&gt; 记住这个匿名函数，我们将会在它发生变化时再次调用</li>
-<li>Set =&gt; 调用保存的匿名函数，更新它的值</li>
-</ul>
-<p>或者以我们的 <code>Dep</code> 类为例</p>
-<ul>
-<li>Price Get =&gt; 调用 <code>dep.depend()</code> 来保存当前的 <code>target</code></li>
-<li>Price Set =&gt; 调用 <code>price</code> 的 <code>dep.notify()</code>，重新调用所以依赖 <code>price</code> 的 <code>target</code></li>
-</ul>
-<p>这和这两种想法，我们的最终代码如下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">let</span> data = &#123; <span class="attr">price</span>: <span class="number">10</span>, <span class="attr">quantity</span>: <span class="number">2</span> &#125;</span><br><span class="line"><span class="keyword">let</span> target = <span class="literal">null</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dep</span> </span>&#123; <span class="comment">// 依赖管理类</span></span><br><span class="line">  <span class="keyword">constructor</span>() &#123;</span><br><span class="line">    <span class="comment">// 用于存储依赖的targets，当执行notify()时</span></span><br><span class="line">    <span class="comment">// 所有依赖的 target 被调用</span></span><br><span class="line">    <span class="keyword">this</span>.subscribers = [] </span><br><span class="line">  &#125;</span><br><span class="line">  depend() &#123; <span class="comment">// 代替前面使用的 record 函数</span></span><br><span class="line">    <span class="keyword">if</span> (target &amp;&amp; !<span class="keyword">this</span>.subscribers.includes( target )) &#123;</span><br><span class="line">      <span class="comment">// 只有当 target 存在且未被订阅过时，进行订阅</span></span><br><span class="line">      <span class="keyword">this</span>.subscribers.push( target );</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  notify() &#123; <span class="comment">// 代替前面的 replay 函数</span></span><br><span class="line">    <span class="comment">// 执行所有的 target（observer）</span></span><br><span class="line">    <span class="keyword">this</span>.subscribers.forEach(<span class="function"><span class="params">sub</span> =&gt;</span> sub());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">Object</span>.keys(data).forEach(<span class="function"><span class="params">key</span> =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> internalValue = data[ key ]</span><br><span class="line">  <span class="comment">// 每个属性内置一个 dep 实例，当属性发生变化时，只触发自带的 dep 实例依赖的所有 target</span></span><br><span class="line">  <span class="keyword">const</span> dep = <span class="keyword">new</span> Dep()</span><br><span class="line"></span><br><span class="line">  <span class="built_in">Object</span>.defineProperty(data, key, &#123;</span><br><span class="line">    get() &#123; </span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">`Getting price: <span class="subst">$&#123;internalValue&#125;</span>`</span>)</span><br><span class="line">      <span class="comment">// 调用get时存储 target </span></span><br><span class="line">      dep.depend()</span><br><span class="line">      <span class="keyword">return</span> internalValue</span><br><span class="line">    &#125;,</span><br><span class="line">    set(newVal) &#123; </span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">`Setting price to: <span class="subst">$&#123;newVal&#125;</span>`</span>)</span><br><span class="line">      internalValue = newVal</span><br><span class="line">      <span class="comment">// 值发生变化时，发送通知，触发当前dep存储的所有 target 调用</span></span><br><span class="line">      dep.notify()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">watcher</span>(<span class="params">func</span>) </span>&#123;</span><br><span class="line">  target = func</span><br><span class="line">  target()</span><br><span class="line">  target = <span class="literal">null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">watcher(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  data.total = data.price * data.quantity</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(data.total)</span><br><span class="line">data.price = <span class="number">20</span></span><br><span class="line"><span class="built_in">console</span>.log(data.total)</span><br><span class="line">data.quantity = <span class="number">3</span></span><br><span class="line"><span class="built_in">console</span>.log(data.total)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 运行结果如下：</span></span><br><span class="line"><span class="comment">// Getting price: 10</span></span><br><span class="line"><span class="comment">// Getting price: 2</span></span><br><span class="line"><span class="comment">// 20</span></span><br><span class="line"><span class="comment">// Setting price to: 20</span></span><br><span class="line"><span class="comment">// Getting price: 20</span></span><br><span class="line"><span class="comment">// Getting price: 2</span></span><br><span class="line"><span class="comment">// 40</span></span><br><span class="line"><span class="comment">// Setting price to: 3</span></span><br><span class="line"><span class="comment">// Getting price: 20</span></span><br><span class="line"><span class="comment">// Getting price: 3</span></span><br><span class="line"><span class="comment">// 60</span></span><br></pre></td></tr></table></figure>
-<p>这正是我们希望得到的！ <code>price</code> 和 <code>quantity</code> 属性变成了响应式的！无论何时，<code>price</code> 或者 <code>quantity</code> 发生变化时，我们的代码总是能够重新执行，并触发更新。</p>
-<p>现在，Vue文档中的插图看上去应该更加明了了</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-28.png" alt=""></p>
-<p>看到包含 <code>setter</code> 和 <code>getter</code> 的紫色圆饼了吗？它看起来很眼熟吧！每一个组件实例都要一个 <code>Watcher</code>实例（蓝色圆饼），它从 getters 中收集依赖（红线），后面一旦 <code>setter</code> 被调用，他就会通知（notify）监视器（watcher）触发更新，进而重新渲染组件。下面是我自己的注解图片：</p>
-<p><img src="http://jclee.cn/ReactivityJS/code-seg-29-1.png" alt=""></p>
-<p>现在看起来是不是，更明白了？</p>
-<p>显然，Vue在幕后是如何做到这一点的更为复杂，但我们现在对其响应式有了基本的认识，对吧！</p>
-<h3 id="我们学到了什么？"><a href="#我们学到了什么？" class="headerlink" title="我们学到了什么？"></a>我们学到了什么？</h3><ul>
-<li>如何创建一个 <code>Dep</code> 类，来收集依赖项(depend)并重新运行所有依赖项(notify)</li>
-<li>如何创建一个 <code>watcher</code> 来管理我们正在运行的，可能需要被添加为一个依赖的代码（ <code>target</code> ）</li>
-<li>如何使用 <code>Object.defineProperty()</code> 来创建 <code>setter</code> 和 <code>getter</code></li>
-</ul>
 
           
         
